@@ -21,3 +21,14 @@ __global__ void logTransformKernel(unsigned char *inp, unsigned char *out, const
     }
 }
 
+__global__ void gammaTransformKernel(unsigned char *inp, unsigned char *out, const uint N, const int C = 1, const float gamma = 1) {
+    uint idx = threadIdx.x + blockDim.x * blockIdx.x;
+    const uint stride = gridDim.x * blockDim.x;
+
+    while(idx < N) {
+        float tmp = static_cast<float>(inp[idx]) / 255.0;
+        tmp = C * powf(tmp, gamma) * 255;
+        out[idx] = static_cast<unsigned char>(tmp);
+        idx += stride;
+    }
+}

@@ -41,6 +41,24 @@ void logTransform(unsigned char *img, unsigned char *res, const uint rows, const
     cudaFree(out);
 }
 
+void gammaTransform(unsigned char *img, unsigned char *res, const uint rows, const uint cols, const int c = 1, const float gamma = 1, const uint channels = 1) {
+    unsigned char *inp, *out;
+    const size_t SIZE_BYTES = sizeof(unsigned char) * rows * cols * channels;
+    cudaMalloc((void**) &inp, SIZE_BYTES);
+    cudaMalloc((void**) &out, SIZE_BYTES);
+    cudaMemcpy(inp, img, SIZE_BYTES, cudaMemcpyHostToDevice);
+
+    dim3 blocks(256); 
+    dim3 grid(96);
+
+    gammaTransformKernel<<<grid, blocks>>>(inp, out, rows * cols * channels, c, gamma);
+
+    cudaMemcpy(res, out, SIZE_BYTES, cudaMemcpyDeviceToHost);
+
+    cudaFree(inp);
+    cudaFree(out);
+}
+
 void intensitySliceThresh(unsigned char *img, unsigned char *res, const uint rows, const uint cols, const uint lrange, const uint urange, const int threshVal, const uint channels = 1) {
     unsigned char *inp, *out;
     const size_t SIZE_BYTES = sizeof(unsigned char) * rows * cols * channels;

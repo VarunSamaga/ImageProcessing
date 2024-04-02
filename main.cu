@@ -74,11 +74,20 @@ int main(int argc, char *argv[]) {
     
     // log Transform
     {
-    logTransform(imgRGB, imoutRGB, rows, cols, 3.3);
+    logTransform(imgRGB, imoutRGB, rows, cols, 255, 3);
 
     imcopyRGB(imoutRGB, outputRGB, rows, cols);
 
     cv::imwrite(cv::format("./Output/%s-logTransform.jpg",  fileName.c_str()), outputRGB);
+    }
+
+    // gamma Transform
+    {
+    gammaTransform(imgGray, imoutGray, rows, cols, 1, .5);
+
+    imcopyGray(imoutGray, output, rows, cols);
+
+    cv::imwrite(cv::format("./Output/%s-gammaTransform.jpg",  fileName.c_str()), output);
     }
 
     // Intensity Level Slicing
